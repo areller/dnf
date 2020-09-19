@@ -8,6 +8,13 @@
     <PackageId>dnf</PackageId>
     <ToolCommandName>dnf</ToolCommandName>
     <PackAsTool>true</PackAsTool>
+
+    <PackageDescription>Run a .NET Framework project from command line</PackageDescription>
+    <Authors>areller</Authors>
+    <Company>areller</Company>
+    <RepositoryUrl>https://github.com/areller/dnf.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    
   </PropertyGroup>
 
   <ItemGroup>
