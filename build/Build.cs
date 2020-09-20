@@ -18,7 +18,7 @@ using static Nuke.Common.Tools.Git.GitTasks;
 
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
-[GitHubActions("ci", GitHubActionsImage.WindowsLatest, OnPushBranches = new[] { "master" }, OnPullRequestBranches = new[] { "master" }, OnPushTags = new[] { "v*" }, ImportSecrets = new[] { "NugetApiKey" })]
+[GitHubActions("ci", GitHubActionsImage.WindowsServer2019, OnPushBranches = new[] { "master" }, OnPullRequestBranches = new[] { "master" }, OnPushTags = new[] { "v*" }, ImportSecrets = new[] { "NugetApiKey" })]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
