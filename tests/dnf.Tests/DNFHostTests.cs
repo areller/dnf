@@ -37,6 +37,7 @@ namespace dnf.Tests
             var outputTcs = new TaskCompletionSource<int>();
             Action<bool, string> capture = (error, message) =>
             {
+                _console.Out.WriteLine("Output: " + message);
                 if (!passArguments)
                 {
                     if (!error && message == "Hello world")
