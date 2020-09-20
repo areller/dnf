@@ -74,11 +74,15 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            DotNetTest(s => s
-                .SetProjectFile(Solution)
-                .SetConfiguration(Configuration)
-                .EnableNoRestore()
-                .EnableNoBuild());
+            foreach (var testProject in Solution.GetProjects("*.Tests"))
+            {
+                Logger.Info($"======== Running Tests for {testProject.Name} ========");
+                DotNetTest(s => s
+                    .SetProjectFile(testProject)
+                    .SetConfiguration(Configuration)
+                    .EnableNoRestore()
+                    .EnableNoBuild());
+            }
         });
 
     Target Pack => _ => _
