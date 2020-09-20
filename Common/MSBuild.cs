@@ -134,7 +134,7 @@ namespace Common
 
             var buildRes = await ProcessUtil.RunAsync(
                 msBuildPath[0],
-                (msBuildPath.Length > 1 ? string.Join(" ", msBuildPath[1..]) + " " : "") + "-consoleLoggerParameters:Verbosity=minimal -nologo -restore:true" + (string.IsNullOrEmpty(solutionPath) ? "" : " -p:SolutionDir=" + solutionPath),
+                (msBuildPath.Length > 1 ? string.Join(" ", msBuildPath[1..]) + " " : "") + "-consoleLoggerParameters:Verbosity=minimal -nologo -t:Rebuild -restore:true" + (string.IsNullOrEmpty(solutionPath) ? "" : " -p:SolutionDir=" + solutionPath),
                 projectPath,
                 throwOnError: false);
 
