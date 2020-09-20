@@ -15,5 +15,7 @@ namespace dnf
         public DirectoryInfo? SolutionPath { get; set; }
 
         public string Arguments { get; set; } = default!;
+
+        public bool NoRestart { get; set; }
     }
 }

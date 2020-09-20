@@ -45,10 +45,15 @@ namespace dnf.Tests
                 SolutionPath = new DirectoryInfo(testSolution.Value)
             }, cancel.Token);
 
-            await WaitOrTimeout(outputTcs.Task);
-
-            cancel.Cancel();
-            await run;
+            try
+            {
+                await WaitOrTimeout(outputTcs.Task);
+            }
+            finally
+            {
+                cancel.Cancel();
+                await run;
+            }
         }
 
         [Fact]
@@ -58,6 +63,7 @@ namespace dnf.Tests
             var projectPath = Path.Join(testSolution.Value, "democonsole");
 
             await using var dnfHost = new DNFHost();
+            using var cancel = new CancellationTokenSource();
 
             int pid = 0;
             Action<bool, string> capture = (error, message) =>
@@ -75,13 +81,23 @@ namespace dnf.Tests
             {
                 Path = new DirectoryInfo(projectPath),
                 SolutionPath = new DirectoryInfo(testSolution.Value)
-            }, default);
+            }, cancel.Token);
 
-            await WaitOrTimeout(run);
+            try
+            {
+                await WaitOrTimeout(run);
+            }
+            finally
+            {
+                cancel.Cancel();
+                await run;
+            }
         }
 
-        [Fact]
-        public async Task ShouldRestartUponRebuild()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ShouldRestartUponRebuild(bool noRestart)
         {
             await using var testSolution = await CopyTestAssets("democonsole");
             var projectPath = Path.Join(testSolution.Value, "democonsole");
@@ -121,14 +137,24 @@ namespace dnf.Tests
             var run = dnfHost.Run(new MultiplexerConsole(new[] { _console, new CaptureConsole(capture) }), new CommandArguments
             {
                 Path = new DirectoryInfo(projectPath),
-                SolutionPath = new DirectoryInfo(testSolution.Value)
+                SolutionPath = new DirectoryInfo(testSolution.Value),
+                NoRestart = noRestart
             }, cancel.Token);
 
-            await finishedBuild.Task;
-            await WaitOrTimeout(newMessageArrived.Task);
+            try
+            {
+                await finishedBuild.Task;
 
-            cancel.Cancel();
-            await run;
+                if (!noRestart)
+                    await WaitOrTimeout(newMessageArrived.Task);
+                else
+                    await ShouldTimeout(newMessageArrived.Task);
+            }
+            finally
+            {
+                cancel.Cancel();
+                await run;
+            }
         }
     }
 }

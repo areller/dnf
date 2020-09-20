@@ -40,17 +40,18 @@ namespace dnf
                 using var cts = new CancellationTokenSource();
                 await using var _ = token.Register(() => cts.Cancel());
 
-                var watch = _watcher.WatchUntilRebuild(buildRes.Directory!, buildRes.File!, cts.Token);
+                var watch = !arguments.NoRestart ? _watcher.WatchUntilRebuild(buildRes.Directory!, buildRes.File!, cts.Token) : Task.Delay(-1, cts.Token);
                 var process = StartProcess(console, arguments, buildDirectory.Value, buildRes.File!, cts.Token);
 
                 var firstTask = await Task.WhenAny(watch, process);
+
+                cts.Cancel();
 
                 if (firstTask == process)
                     break;
                 else if (!token.IsCancellationRequested)
                     console.Out.WriteLine($"Restarting {buildRes.File!} due to rebuild");
 
-                cts.Cancel();
                 await process;
             }
         }

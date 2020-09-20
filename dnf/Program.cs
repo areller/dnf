@@ -26,6 +26,10 @@ namespace dnf
                     Arity = ArgumentArity.ZeroOrOne,
                     Description = "The relative or absolute path to the solution directory",
                     Name = "solutionPath"
+                },
+                new Option<bool>("--no-restart", "Keep running project even after rebuilds")
+                {
+                    IsRequired = false
                 }
             };
 
