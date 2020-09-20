@@ -86,11 +86,10 @@ class Build : NukeBuild
         });
 
     Target Pack => _ => _
-        .OnlyWhenDynamic(WhenTagged)
         .DependsOn(Test)
         .Executes(() =>
         {
-            foreach (var project in new[] { Solution.GetProject("dnf") })
+            foreach (var project in new[] { Solution.GetProject("dnf"), Solution.GetProject("dnf-iis") })
             {
                 DotNetPack(s => s
                     .SetProject(project)
