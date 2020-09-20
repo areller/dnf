@@ -9,7 +9,7 @@ namespace TestsHelpers
 {
     public class Helpers
     {
-        private static readonly int DefaultTimeout = Debugger.IsAttached ? 10000 : 30000;
+        private static readonly int DefaultTimeout = 60000;
 
         public static async Task<TemporaryDirectory> CopyTestAssets(string name)
         {
