@@ -24,4 +24,12 @@
     <ProjectReference Include="..\TestsHelpers\TestsHelpers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_AssetsItems Include="..\assets\**\*" />
+  </ItemGroup>
+
+  <Target Name="CopyTestAssets" AfterTargets="AfterBuild">
+    <Copy SourceFiles="@(_AssetsItems)" DestinationFolder="$(OutDir)\assets\%(RecursiveDir)" />
+  </Target>
+
 </Project>
