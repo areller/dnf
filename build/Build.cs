@@ -74,13 +74,15 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            // need to figure out setup for tests
-            /*
-            DotNetTest(s => s
-                .SetProjectFile(Solution)
-                .SetConfiguration(Configuration)
-                .EnableNoRestore()
-                .EnableNoBuild());*/
+            foreach (var testProject in Solution.GetProjects("*.Tests"))
+            {
+                Logger.Info($"======== Running Tests for {testProject.Name} ========");
+                DotNetTest(s => s
+                    .SetProjectFile(testProject)
+                    .SetConfiguration(Configuration)
+                    .EnableNoRestore()
+                    .EnableNoBuild());
+            }
         });
 
     Target Pack => _ => _
@@ -102,10 +104,10 @@ class Build : NukeBuild
 
     Target Publish => _ => _
         .OnlyWhenDynamic(WhenTagged)
+        .OnlyWhenDynamic(() => Configuration.Equals(Configuration.Release))
         .DependsOn(Pack)
         .Requires(() => NugetApiUrl)
         .Requires(() => NugetApiKey)
-        .Requires(() => Configuration.Equals(Configuration.Release))
         .Executes(() =>
         {
             GlobFiles(NugetDirectory, "*.nupkg")
