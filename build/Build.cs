@@ -76,10 +76,11 @@ class Build : NukeBuild
         {
             foreach (var testProject in Solution.GetProjects("*.Tests"))
             {
-                Console.WriteLine($"=== Running Tests for {testProject.Name} ===");
+                Logger.Info($"======== Running Tests for {testProject.Name} ========");
                 DotNetTest(s => s
-                    .SetProjectFile(Solution.GetProject("Common.Tests"))
+                    .SetProjectFile(testProject)
                     .SetConfiguration(Configuration)
+                    .SetResultsDirectory(ArtifactsDirectory)
                     .EnableNoRestore()
                     .EnableNoBuild());
             }
