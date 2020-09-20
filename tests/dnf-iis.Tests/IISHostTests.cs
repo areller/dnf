@@ -45,7 +45,7 @@ namespace dnf_iis.Tests
             try
             {
                 var httpClient = new HttpClient();
-                var res = await Retry.Get(() => httpClient.GetAsync($"http://localhost:{port}/DemoApi"), 10, Retry.ConstantTimeBackOff());
+                var res = await Retry.Get(() => httpClient.GetAsync($"http://localhost:{port}/DemoApi"), 20, Retry.ConstantTimeBackOff());
 
                 Assert.False(res.IsSuccessStatusCode);
             }
@@ -77,7 +77,7 @@ namespace dnf_iis.Tests
             try
             {
                 var httpClient = new HttpClient();
-                var res = await Retry.Get(() => httpClient.GetAsync($"http://localhost:{port}/DemoApi"), 10, Retry.ConstantTimeBackOff());
+                var res = await Retry.Get(() => httpClient.GetAsync($"http://localhost:{port}/DemoApi"), 20, Retry.ConstantTimeBackOff());
                 if (!res.IsSuccessStatusCode)
                     _console.Out.WriteLine(await res.Content.ReadAsStringAsync());
 
