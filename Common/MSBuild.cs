@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +32,9 @@ namespace Common
 
         private static async Task<string[]> DiscoverMSBuild()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                throw new Exception("Detected a non Windows operating system.");
+
             foreach (var discoverPath in DiscoveryPaths)
             {
                 var msBuild = await discoverPath();

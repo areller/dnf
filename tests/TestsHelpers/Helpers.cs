@@ -1,6 +1,8 @@
 ﻿using Common;
 using System;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -48,6 +50,13 @@ namespace TestsHelpers
                 cancel.Cancel();
                 throw new Exception("didn't timeout");
             }
+        }
+
+        public static int CreateRandomPort()
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+            return ((IPEndPoint)socket.LocalEndPoint).Port;
         }
     }
 }

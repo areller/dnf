@@ -22,6 +22,7 @@ namespace Common
         public Action<string>? ErrorData { get; set; }
         public Action<int>? OnStart { get; set; }
         public Action<int>? OnStop { get; set; }
+        public bool? CreateWindow { get; set; }
         public string? ShortDisplayName()
             => Path.GetFileNameWithoutExtension(Executable);
     }
@@ -61,6 +62,7 @@ namespace Common
             Action<string>? errorDataReceived = null,
             Action<int>? onStart = null,
             Action<int>? onStop = null,
+            bool? createWindow = null,
             CancellationToken cancellationToken = default)
         {
             using var process = new Process()
@@ -73,7 +75,7 @@ namespace Common
                     RedirectStandardError = true,
                     RedirectStandardInput = false,
                     UseShellExecute = false,
-                    CreateNoWindow = !IsWindows,
+                    CreateNoWindow = createWindow.HasValue ? !createWindow.Value : !IsWindows,
                     WindowStyle = ProcessWindowStyle.Hidden
                 },
                 EnableRaisingEvents = true
@@ -183,7 +185,7 @@ namespace Common
 
         public static Task<ProcessResult> RunAsync(ProcessSpec processSpec, CancellationToken cancellationToken = default, bool throwOnError = true)
         {
-            return RunAsync(processSpec.Executable!, processSpec.Arguments!, processSpec.WorkingDirectory, throwOnError: throwOnError, processSpec.EnvironmentVariables, processSpec.OutputData, processSpec.ErrorData, processSpec.OnStart, processSpec.OnStop, cancellationToken);
+            return RunAsync(processSpec.Executable!, processSpec.Arguments!, processSpec.WorkingDirectory, throwOnError: throwOnError, processSpec.EnvironmentVariables, processSpec.OutputData, processSpec.ErrorData, processSpec.OnStart, processSpec.OnStop, processSpec.CreateWindow, cancellationToken);
         }
 
         public static void KillProcess(int pid)
