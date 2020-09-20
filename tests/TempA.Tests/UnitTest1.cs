@@ -108,6 +108,14 @@ namespace TempA.Tests
 
             try
             {
+                Task.Run(async () =>
+                {
+                    var artifactWatcher = new ArtifactsWatcher(_console);
+                    _console.Out.WriteLine("Starting second watch");
+                    await artifactWatcher.WatchUntilRebuild(Path.Join(projectPath, "bin", "Debug"), "sometext.txt", default);
+                    _console.Out.WriteLine("Finished watching");
+                });
+
                 await finishedBuild.Task;
 
                 if (!noRestart)
