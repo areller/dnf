@@ -25,7 +25,7 @@ namespace dnf.Tests
 
         [Theory]
         [InlineData(false)]
-        [InlineData(true)]
+        //[InlineData(true)]
         public async Task ShouldRunHostAndRecordOutput(bool passArguments)
         {
             await using var testSolution = await CopyTestAssets("democonsole");
