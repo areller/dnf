@@ -10,17 +10,17 @@ namespace dnf
 {
     class DNFHost : Host<CommandArguments>
     {
-        private ArtifactsWatcher _watcher;
         private MSBuild _msBuild;
 
         public DNFHost()
         {
-            _watcher = new ArtifactsWatcher();
             _msBuild = new MSBuild();
         }
 
         public override async Task Run(IConsole console, CommandArguments arguments, CancellationToken token)
         {
+            var watcher = new ArtifactsWatcher(console);
+
             var buildRes = await _msBuild.BuildAndGetArtifactPath(arguments.Path.FullName, arguments.SolutionPath?.FullName);
             if (!buildRes.Success)
             {
@@ -40,7 +40,7 @@ namespace dnf
                 using var cts = new CancellationTokenSource();
                 await using var _ = token.Register(() => cts.Cancel());
 
-                var watch = !arguments.NoRestart ? _watcher.WatchUntilRebuild(buildRes.Directory!, buildRes.File!, cts.Token) : Task.Delay(-1, cts.Token);
+                var watch = !arguments.NoRestart ? watcher.WatchUntilRebuild(buildRes.Directory!, buildRes.File!, cts.Token) : Task.Delay(-1, cts.Token);
                 var process = StartProcess(console, arguments, buildDirectory.Value, buildRes.File!, cts.Token);
 
                 var firstTask = await Task.WhenAny(watch, process);
