@@ -76,7 +76,6 @@ namespace dnf_iis.Tests
 
             try
             {
-                await Task.Delay(10000);
                 var httpClient = new HttpClient();
                 var res = await Retry.Get(() => httpClient.GetAsync($"http://localhost:{port}/DemoApi"), 20, Retry.ConstantTimeBackOff());
                 if (!res.IsSuccessStatusCode)

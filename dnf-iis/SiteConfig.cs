@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace dnf_iis
             var fullName = Path.Combine(directory, Path.GetRandomFileName() + ".config");
 
             using var tpl = _assembly.GetManifestResourceStream("dnf_iis.Templates.default.config.tpl");
-            using var reader = new StreamReader(tpl);
+            using var reader = new StreamReader(tpl!);
 
             using var newFile = new FileStream(fullName, FileMode.Create);
             using var writer = new StreamWriter(newFile);

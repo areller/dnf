@@ -18,7 +18,7 @@ using static Nuke.Common.Tools.Git.GitTasks;
 
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
-[GitHubActions("ci", GitHubActionsImage.WindowsServer2019, OnPushBranches = new[] { "master" }, OnPullRequestBranches = new[] { "master" }, OnPushTags = new[] { "v*" }, ImportSecrets = new[] { "NugetApiKey" })]
+[GitHubActions("ci", GitHubActionsImage.WindowsLatest, OnPushBranches = new[] { "master" }, OnPullRequestBranches = new[] { "master" }, OnPushTags = new[] { "v*" }, ImportSecrets = new[] { "NugetApiKey" })]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -74,7 +74,7 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            foreach (var testProject in Solution.GetProjects("dnf-iis.Tests"))
+            foreach (var testProject in Solution.GetProjects("*.Tests"))
             {
                 Logger.Info($"======== Running Tests for {testProject.Name} ========");
                 DotNetTest(s => s
