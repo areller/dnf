@@ -9,6 +9,7 @@ namespace democonsole
         {
             var foo = new Foo();
             foo.PrintHello();
+	    Console.WriteLine(string.Join(" ", args));
             Console.WriteLine("Message A");
             Console.ReadLine();
         }

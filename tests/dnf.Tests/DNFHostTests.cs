@@ -23,8 +23,10 @@ namespace dnf.Tests
             _console = new TestsConsole(output);
         }
 
-        [Fact]
-        public async Task ShouldRunHostAndRecordOutput()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ShouldRunHostAndRecordOutput(bool passArguments)
         {
             await using var testSolution = await CopyTestAssets("democonsole");
             var projectPath = Path.Join(testSolution.Value, "democonsole");
@@ -35,14 +37,23 @@ namespace dnf.Tests
             var outputTcs = new TaskCompletionSource<int>();
             Action<bool, string> capture = (error, message) =>
             {
-                if (!error && message == "Hello world")
-                    outputTcs.TrySetResult(0);
+                if (!passArguments)
+                {
+                    if (!error && message == "Hello world")
+                        outputTcs.TrySetResult(0);
+                }
+                else
+                {
+                    if (!error && message == "some arguments")
+                        outputTcs.TrySetResult(0);
+                }
             };
 
             var run = dnfHost.Run(new MultiplexerConsole(new[] { _console, new CaptureConsole(capture) }), new CommandArguments
             {
                 Path = new DirectoryInfo(projectPath),
-                SolutionPath = new DirectoryInfo(testSolution.Value)
+                SolutionPath = new DirectoryInfo(testSolution.Value),
+                Arguments = passArguments ? "some arguments" : string.Empty
             }, cancel.Token);
 
             try
