@@ -34,7 +34,7 @@ namespace Common
 
         public async ValueTask DisposeAsync()
         {
-            await Retry.Do(() => DeleteDirectory(Value), 5, Retry.ConstantTimeBackOff());
+            await Retry.Do(() => DeleteDirectory(Value), 60, Retry.ConstantTimeBackOff());
         }
 
         private static void DeleteDirectory(string dir)
