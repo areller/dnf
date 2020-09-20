@@ -45,8 +45,6 @@ namespace dnf
 
                 var firstTask = await Task.WhenAny(watch, process);
 
-                console.Out.WriteLine("=== finished run");
-
                 cts.Cancel();
 
                 if (firstTask == process)

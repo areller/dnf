@@ -37,7 +37,6 @@ namespace dnf.Tests
             var outputTcs = new TaskCompletionSource<int>();
             Action<bool, string> capture = (error, message) =>
             {
-                _console.Out.WriteLine("Output: " + message);
                 if (!passArguments)
                 {
                     if (!error && message == "Hello world")
@@ -130,20 +129,15 @@ namespace dnf.Tests
                 }
                 else if (!error && message == "Message A")
                 {
-                    Task.Delay(1000)
-                        .ContinueWith(_ =>
+                    var projectCs = Path.Join(projectPath, "Program.cs");
+                    File.WriteAllText(projectCs, File.ReadAllText(projectCs).Replace("Message A", "Message B"));
+                    msBuild.BuildAndGetArtifactPath(projectPath, testSolution.Value)
+                        .ContinueWith(res =>
                         {
-                            var projectCs = Path.Join(projectPath, "Program.cs");
-                            File.WriteAllText(projectCs, File.ReadAllText(projectCs).Replace("Message A", "Message B"));
-                            _console.Out.WriteLine("=== starting build");
-                            msBuild.BuildAndGetArtifactPath(projectPath, testSolution.Value)
-                                .ContinueWith(res =>
-                                {
-                                    if (!res.Result.Success)
-                                        _console.Error.WriteLine(res.Result.Error);
+                            if (!res.Result.Success)
+                                _console.Error.WriteLine(res.Result.Error);
 
-                                    finishedBuild.TrySetResult(0);
-                                });
+                            finishedBuild.TrySetResult(0);
                         });
                 }
                 else if (!error && message == "Message B")
