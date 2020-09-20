@@ -130,6 +130,7 @@ namespace TempA.Tests
             }
             finally
             {
+                _console.Out.WriteLine("==== calling cancel");
                 cancel.Cancel();
                 await run;
             }
