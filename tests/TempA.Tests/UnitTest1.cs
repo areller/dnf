@@ -64,6 +64,7 @@ namespace TempA.Tests
             await using var dnfHost = new DNFHost();
             using var cancel = new CancellationTokenSource();
 
+            var firstMessageArrived = new TaskCompletionSource<int>();
             var finishedBuild = new TaskCompletionSource<int>();
             var newMessageArrived = new TaskCompletionSource<int>();
 
@@ -76,6 +77,8 @@ namespace TempA.Tests
                 }
                 else if (!error && message == "Message A")
                 {
+                    firstMessageArrived.TrySetResult(0);
+                    Thread.Sleep(1000);
                     var projectCs = Path.Join(projectPath, "Program.cs");
                     File.WriteAllText(projectCs, File.ReadAllText(projectCs).Replace("Message A", "Message B"));
                     msBuild.BuildAndGetArtifactPath(projectPath, testSolution.Value)
@@ -108,13 +111,15 @@ namespace TempA.Tests
 
             try
             {
-                Task.Run(async () =>
+                await firstMessageArrived.Task;
+
+                _console.Out.WriteLine("Starting second watcher");
+                var fileWatcher = new FileSystemWatcher(Path.Join(projectPath, "bin", "Debug"));
+                fileWatcher.Changed += (_, e) =>
                 {
-                    var artifactWatcher = new ArtifactsWatcher(_console);
-                    _console.Out.WriteLine("Starting second watch");
-                    await artifactWatcher.WatchUntilRebuild(Path.Join(projectPath, "bin", "Debug"), "sometext.txt", default);
-                    _console.Out.WriteLine("Finished watching");
-                });
+                    _console.Out.WriteLine("Second watcher file changed: " + e.Name);
+                };
+                fileWatcher.EnableRaisingEvents = true;
 
                 await finishedBuild.Task;
 
