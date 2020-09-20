@@ -1,5 +1,6 @@
 ﻿using Common;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ namespace TestsHelpers
 {
     public class Helpers
     {
+        private static readonly int DefaultTimeout = Debugger.IsAttached ? 10000 : 30000;
+
         public static async Task<TemporaryDirectory> CopyTestAssets(string name)
         {
             var assetPath = Path.Join(Directory.GetCurrentDirectory(), "assets", name);
@@ -27,10 +30,10 @@ namespace TestsHelpers
             }
         }
 
-        public static async Task WaitOrTimeout(Task task, int timeoutMilliseconds = 10000)
+        public static async Task WaitOrTimeout(Task task, int? timeoutMilliseconds = null)
         {
             var cancel = new CancellationTokenSource();
-            var timeout = Task.Delay(timeoutMilliseconds, cancel.Token);
+            var timeout = Task.Delay(timeoutMilliseconds ?? DefaultTimeout, cancel.Token);
             var firstToFinish = await Task.WhenAny(task, timeout);
             if (firstToFinish == timeout)
                 throw new Exception("timeout");
@@ -38,10 +41,10 @@ namespace TestsHelpers
             cancel.Cancel();
         }
 
-        public static async Task ShouldTimeout(Task task, int timeoutMilliseconds = 10000)
+        public static async Task ShouldTimeout(Task task, int? timeoutMilliseconds = null)
         {
             var cancel = new CancellationTokenSource();
-            var timeout = Task.Delay(timeoutMilliseconds, cancel.Token);
+            var timeout = Task.Delay(timeoutMilliseconds ?? DefaultTimeout, cancel.Token);
             var firstToFinish = await Task.WhenAny(task, timeout);
             if (firstToFinish == task)
             {

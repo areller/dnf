@@ -80,7 +80,6 @@ class Build : NukeBuild
                 DotNetTest(s => s
                     .SetProjectFile(testProject)
                     .SetConfiguration(Configuration)
-                    .SetResultsDirectory(ArtifactsDirectory)
                     .EnableNoRestore()
                     .EnableNoBuild());
             }
