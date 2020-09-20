@@ -74,7 +74,7 @@ class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            foreach (var testProject in Solution.GetProjects("*.Tests"))
+            foreach (var testProject in Solution.GetProjects("TempA.Tests"))
             {
                 Logger.Info($"======== Running Tests for {testProject.Name} ========");
                 DotNetTest(s => s

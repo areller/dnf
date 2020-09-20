@@ -9,7 +9,7 @@ namespace TestsHelpers
 {
     public class Helpers
     {
-        private static readonly int DefaultTimeout = 60000;
+        private static readonly int DefaultTimeout = 10000;
 
         public static async Task<TemporaryDirectory> CopyTestAssets(string name)
         {
