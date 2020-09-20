@@ -39,7 +39,16 @@ namespace dnf_iis
             var configPath = await siteConfig.Create(TempDirectory.Value);
 
             if (!arguments.NoBuild)
-                await _msBuild.BuildAndGetArtifactPath(arguments.Path.FullName, arguments.SolutionPath?.FullName);
+            {
+                var buildRes = await _msBuild.BuildAndGetArtifactPath(arguments.Path.FullName, arguments.SolutionPath?.FullName);
+                if (!buildRes.Success)
+                {
+                    if (!string.IsNullOrEmpty(buildRes.Error))
+                        throw new Exception(buildRes.Error);
+
+                    throw new Exception("Failed to build website");
+                }
+            }
 
             var spec = new ProcessSpec
             {
