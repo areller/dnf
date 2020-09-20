@@ -15,7 +15,7 @@ namespace Common.Tests
             await using var testSolution = await CopyTestAssets("democonsole");
             var projectPath = Path.Join(testSolution.Value, "democonsole");
 
-            var msBuild = new MSBuild();
+            var msBuild = new MSBuild(null);
             var buildRes = await msBuild.BuildAndGetArtifactPath(projectPath, provideSolutionPath ? testSolution.Value : null);
 
             Assert.Equal(provideSolutionPath, buildRes.Success);

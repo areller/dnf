@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
+using System.CommandLine;
+using System.CommandLine.IO;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -119,6 +121,13 @@ namespace Common
 
         #endregion
 
+        private IConsole _console;
+
+        public MSBuild(IConsole console)
+        {
+            _console = console;
+        }
+
         public async Task<BuildResult> BuildAndGetArtifactPath(string projectPath, string? solutionPath)
         {
             var msBuildPath = await _discoveryTask.Value;
@@ -155,6 +164,8 @@ namespace Common
             }
 
             var artifactPath = regex.Match(artifactCopyLine).Groups.Values.Last().Value;
+
+            _console?.Out.WriteLine("Produced artifact: " + artifactPath);
 
             return new BuildResult
             {

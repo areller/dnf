@@ -10,18 +10,16 @@ namespace dnf
 {
     class DNFHost : Host<CommandArguments>
     {
-        private MSBuild _msBuild;
-
         public DNFHost()
         {
-            _msBuild = new MSBuild();
         }
 
         public override async Task Run(IConsole console, CommandArguments arguments, CancellationToken token)
         {
             var watcher = new ArtifactsWatcher(console);
+            var msBuild = new MSBuild(console);
 
-            var buildRes = await _msBuild.BuildAndGetArtifactPath(arguments.Path.FullName, arguments.SolutionPath?.FullName);
+            var buildRes = await msBuild.BuildAndGetArtifactPath(arguments.Path.FullName, arguments.SolutionPath?.FullName);
             if (!buildRes.Success)
             {
                 if (!string.IsNullOrEmpty(buildRes.Error))

@@ -19,6 +19,8 @@ namespace dnf
         {
             var tcs = new TaskCompletionSource<int>();
 
+            _console.Out.WriteLine("Watching directory " + artifactsDir);
+
             await using var _ = token.Register(() => tcs.TrySetResult(0));
 
             using var watcher = new FileSystemWatcher(artifactsDir);

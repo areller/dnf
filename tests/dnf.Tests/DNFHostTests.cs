@@ -113,7 +113,7 @@ namespace dnf.Tests
             await using var testSolution = await CopyTestAssets("democonsole");
             var projectPath = Path.Join(testSolution.Value, "democonsole");
 
-            var msBuild = new MSBuild();
+            var msBuild = new MSBuild(_console);
             await using var dnfHost = new DNFHost();
             using var cancel = new CancellationTokenSource();
 
