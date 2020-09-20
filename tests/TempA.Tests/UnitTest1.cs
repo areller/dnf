@@ -84,8 +84,12 @@ namespace TempA.Tests
                             if (!res.Result.Success)
                                 _console.Error.WriteLine(res.Result.Error);
 
-                            File.WriteAllText(Path.Join(projectPath, "bin", "Debug", "sometext.txt"), "Message A");
-                            File.WriteAllText(Path.Join(projectPath, "bin", "Debug", "sometext.txt"), "Message B");
+                            var filePath = Path.Join(projectPath, "bin", "Debug", "sometext.txt");
+                            _console.Out.WriteLine("Writing to file path: " + filePath);
+                            File.WriteAllText(filePath, "Message A");
+                            File.WriteAllText(filePath, "Message C");
+
+                            _console.Out.WriteLine(File.ReadAllText(filePath));
 
                             finishedBuild.TrySetResult(0);
                         });
