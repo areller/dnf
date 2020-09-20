@@ -1,6 +1,7 @@
 ﻿using Common;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.IO;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
@@ -77,6 +78,9 @@ namespace dnf_iis.Tests
             {
                 var httpClient = new HttpClient();
                 var res = await Retry.Get(() => httpClient.GetAsync($"http://localhost:{port}/DemoApi"), 10, Retry.ConstantTimeBackOff());
+                if (!res.IsSuccessStatusCode)
+                    _console.Out.WriteLine(await res.Content.ReadAsStringAsync());
+
                 Assert.True(res.IsSuccessStatusCode);
 
                 var json = await JsonSerializer.DeserializeAsync<Dictionary<string, string>>(await res.Content.ReadAsStreamAsync());
