@@ -129,15 +129,20 @@ namespace dnf.Tests
                 }
                 else if (!error && message == "Message A")
                 {
-                    var projectCs = Path.Join(projectPath, "Program.cs");
-                    File.WriteAllText(projectCs, File.ReadAllText(projectCs).Replace("Message A", "Message B"));
-                    msBuild.BuildAndGetArtifactPath(projectPath, testSolution.Value)
-                        .ContinueWith(res =>
+                    Task.Delay(1000)
+                        .ContinueWith(_ =>
                         {
-                            if (!res.Result.Success)
-                                _console.Error.WriteLine(res.Result.Error);
+                            var projectCs = Path.Join(projectPath, "Program.cs");
+                            File.WriteAllText(projectCs, File.ReadAllText(projectCs).Replace("Message A", "Message B"));
+                            _console.Out.WriteLine("=== starting build");
+                            msBuild.BuildAndGetArtifactPath(projectPath, testSolution.Value)
+                                .ContinueWith(res =>
+                                {
+                                    if (!res.Result.Success)
+                                        _console.Error.WriteLine(res.Result.Error);
 
-                            finishedBuild.TrySetResult(0);
+                                    finishedBuild.TrySetResult(0);
+                                });
                         });
                 }
                 else if (!error && message == "Message B")
